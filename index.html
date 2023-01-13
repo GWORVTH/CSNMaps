@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto">
+
+  <title>Climate Safe Neighborhoods Map </title>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      padding: 0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+    #header {
+      float:top;
+      width: 100%;
+      background-color:#0E4C66;
+      height: 10%;
+      text-align: center;
+      color: white;
+      font-family: Roboto;
+    }
+  </style>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.5/esri/css/main.css">
+  <script src="https://js.arcgis.com/4.5/"></script>
+
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/layers/GroupLayer",
+      "esri/layers/FeatureLayer",
+      "esri/widgets/LayerList",
+      "esri/widgets/Legend",
+      "dojo/domReady!"
+    ], function(
+      Map, MapView, GroupLayer, FeatureLayer, LayerList, Legend
+    ) {
+
+      // Create layer showing Diesel Particulate AQ.
+
+      var dieselAQLayer = new FeatureLayer({
+        portalItem: {
+            id: "ae1a698f1f1949249318337bebe810c6"
+        }
+      });
+
+      // Create layer showing median net worth.
+      // Set visibility to false so it's not visible on startup.
+
+      var ozoneLayer = new FeatureLayer({
+        portalItem: {
+            id: "b53231d9a9d14deaa4999eab8934aa43"
+        }
+      });
+
+      var airToxicsLayer = new FeatureLayer({
+        portalItem: {
+            id: "7bd8a19630cb4b8a867893f2ea920d29"
+        },
+        title: "Air Toxics Respiratory Hazard (EJ Screen, 2021)"
+      });
+
+      var hazardousWasteLayer = new FeatureLayer({
+        portalItem: {
+            id: "bb268e30b4e8485d84db1219f635ec6a"
+        }
+      });
+
+      var trafficProximityLayer = new FeatureLayer({
+        portalItem: {
+            id: "bee44bc3a2c64173a3265b9795889918"
+        }
+      });
+
+      var runoffLayer = new FeatureLayer({
+        portalItem: {
+            id: "bd07742d5c3b4a4eb01257d73c1da285"
+        }
+      });
+
+      var landslideLayer = new FeatureLayer({
+        portalItem: {
+            id: "98734a7415fd46ffa2f41a44751b4c95"
+        }
+      });
+
+      var surfaceTempLayer = new FeatureLayer({
+        portalItem: {
+            id: "80927bc93be84ef5bf7a1ec4850bf46d"
+        }
+      });
+
+      var treeCanopyLayer = new FeatureLayer({
+        portalItem: {
+            id: "c86ccf5b155c4265ad551521e36a30ff"
+        }
+      });
+
+      var sewerOverflowLayer = new FeatureLayer({
+        portalItem: {
+            id: "e983d08c99154b148cd74469dc0d52c1"
+        }
+      });
+      // Create GroupLayer with the two MapImageLayers created above
+      // as children layers.
+
+      var environmentalGroupLayer = new GroupLayer({
+        title: "Environmental Factors",
+        visible: true,
+        visibilityMode: "exclusive",
+        //layers: [dieselAQLayer, ozoneLayer],
+        opacity: 1
+      });
+      environmentalGroupLayer.add(ozoneLayer);
+      environmentalGroupLayer.add(dieselAQLayer);
+      environmentalGroupLayer.add(airToxicsLayer);
+      environmentalGroupLayer.add(hazardousWasteLayer);
+      environmentalGroupLayer.add(trafficProximityLayer);
+      environmentalGroupLayer.add(runoffLayer);
+      environmentalGroupLayer.add(landslideLayer);
+      environmentalGroupLayer.add(surfaceTempLayer);
+      environmentalGroupLayer.add(treeCanopyLayer);
+      environmentalGroupLayer.add(sewerOverflowLayer);
+      // Create a map and add the group layer to it
+
+      var map = new Map({
+        basemap: "topo",
+        layers: [environmentalGroupLayer]
+      });
+
+      // Add the map to a MapView
+
+      var view = new MapView({
+        center: [-84.5120, 39.1031],
+        zoom: 12,
+        container: "viewDiv",
+        map: map
+      });
+
+      view.then(function() {
+
+        // Create the LayerList widget with the associated actions
+        // and add it to the top-right corner of the view.
+
+        var layerList = new LayerList({
+          view: view
+        });
+
+        // Add widget to the top right corner of the view
+        view.ui.add(layerList, "top-right");
+
+        var legend = new Legend({
+            view: view
+          });
+
+          // Add widget to the bottom right corner of the view
+          view.ui.add(legend, "bottom-right");
+      });
+    });
+  </script>
+
+</head>
+
+<body>
+    <div id = "header"; style= "display: table; height: 15px; overflow: hidden;"><h1 style= "vertical-align: middle;">Greater Cincinnati Climate Safe Neighborhoods</h1></div>
+    <div id= "titleViewDiv"; style= "display:table;height: 4px; overflow: hidden;"></div>
+  <div id="viewDiv"></div>
+</body>
+
+</html>
